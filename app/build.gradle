@@ -9,6 +9,8 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     id 'application'
+    id 'com.github.johnrengelman.shadow' version '7.1.0'  // Add this plugin
+
 }
 
 repositories {
@@ -21,6 +23,12 @@ dependencies {
     implementation libs.guava
     implementation 'org.apache.hadoop:hadoop-common:3.3.6'
     implementation 'org.apache.hadoop:hadoop-mapreduce-client-core:3.3.6'
+    implementation 'org.apache.hadoop:hadoop-client:3.3.6'
+}
+shadowJar {
+    archiveBaseName = 'proj3'
+    archiveClassifier = ''
+    archiveVersion = '0.1.0'
 }
 
 testing {
@@ -42,10 +50,17 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.example.App'
+    mainClass = 'org.example.App.App'
 }
 
 jar {
     archiveFileName = 'proj3.jar'
     destinationDirectory = file('./')
+    manifest {
+        attributes(
+            'Main-Class': 'org.example.App.App',
+            'Implementation-Title': 'Proj3',
+            'Implementation-Version': version
+        )
+    }
 }
