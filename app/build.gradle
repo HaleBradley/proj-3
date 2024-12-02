@@ -44,3 +44,8 @@ application {
     // Define the main class for the application.
     mainClass = 'org.example.App'
 }
+
+jar {
+    archiveFileName = 'proj3.jar'
+    destinationDirectory = file('./')
+}
