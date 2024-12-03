@@ -115,7 +115,7 @@ public class  App{
         Configuration configuration = new Configuration();
         Job genomicInteractionJob = Job.getInstance(configuration, "Genomic Interaction Counter");
         
-        genomicInteractionJob.setJarByClass(GenomicInteractionAnalyzer.class);
+        genomicInteractionJob.setJarByClass(App.class);
         genomicInteractionJob.setMapperClass(InteractionMapper.class);
         genomicInteractionJob.setCombinerClass(InteractionReducer.class);
         genomicInteractionJob.setReducerClass(InteractionReducer.class);
