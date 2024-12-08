@@ -9,6 +9,7 @@ import scala.Tuple2;
 import java.util.Arrays;
 
 public class App {
+    //static data representing the lengths of each chromosome
     private static final int[] CHROMOSOME_LENGTHS = {
         248956422, 242193529, 198295559, 190214555, 181538259,
         170805979, 159345973, 145138636, 138394717, 133797422,
@@ -16,18 +17,20 @@ public class App {
         90338345, 83257441, 80373285, 58617616, 64444167,
         46709983, 50818468, 156040895
     };
-
+    //ensure proper usage with input and output directories
     public static void main(String[] args) {
         if (args.length < 2) {
             System.err.println("Usage: App <input_file> <output_dir>");
             System.exit(1);
         }
-
+        //create a SparkSession
         SparkSession spark = SparkSession.builder().appName("Genomic Interaction Counter").getOrCreate();
         JavaSparkContext sc = new JavaSparkContext(spark.sparkContext());
 
+        // Read input data
         JavaRDD<String> lines = sc.textFile(args[0]);
 
+        // Map interaction lines to bin pairs
         JavaPairRDD<String, Integer> binPairs = lines
             .mapToPair(line -> {
                 String[] interactions = line.split("\\s+");
@@ -46,13 +49,15 @@ public class App {
                 return new Tuple2<>(String.format("(%d,%d)", orderedBin1, orderedBin2), 1);
             })
             .filter(pair -> pair != null);
-
+        //count interactions in each bin pair
         JavaPairRDD<String, Integer> binCounts = binPairs.reduceByKey(Integer::sum);
         binCounts.saveAsTextFile(args[1]);
 
+        // Stop Spark session
         spark.stop();
     }
 
+    //method to calculate bin index for a given chromosome and position
     private static int[] calculateBinIndex(String chromosomeStr, String positionStr) {
         try {
             int chromosome = Integer.parseInt(chromosomeStr);
